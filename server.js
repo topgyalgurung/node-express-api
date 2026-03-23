@@ -1,5 +1,6 @@
 const cors = require("cors");
 const express = require("express");
+const productsRouter = require("./products"); // import product router
 
 const app = express();
 
@@ -12,7 +13,12 @@ app.use(
 );
 
 // enable json body parsing otherwise request.body will be undefined
+// note: express execute things from top to bottom, e.g if json body parsing after post, req.body will be undefined
 app.use(express.json());
+
+// mount the router
+// whenever request comes which starts with products express will forward to productsRouter
+app.use("/products", productsRouter);
 
 // 1. get routes
 app.get("/", (req, res) => {
@@ -21,31 +27,6 @@ app.get("/", (req, res) => {
 
 app.get("/about", (req, res) => {
   res.send("this is about page");
-});
-
-// 2. json
-// most modern api send and receive in json format
-app.get("/products", (req, res) => [
-  res.json([
-    { id: 1, name: "Laptop", price: 1299 },
-    { id: 2, name: "Mouse", price: 50 },
-  ]),
-]);
-
-// 3. route parameters
-app.get("/products/:id", (req, res) => {
-  //extract info from request
-  const id = Number(req.params.id);
-
-  // hard coded data in real project get data from database
-  // and also error handling for bad request
-  const products = [
-    { id: 1, name: "Laptop", price: 1299 },
-    { id: 2, name: "Mouse", price: 50 },
-  ];
-
-  const requestedProduct = products.find((product) => product.id === id);
-  res.json(requestedProduct);
 });
 
 app.get("/message", (req, res) => {
