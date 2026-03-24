@@ -12,6 +12,12 @@ app.use(
   }),
 );
 
+// middleware: all app.use are middleware
+app.use((req, res, next) => {
+  console.log(req.method, req.path);
+  next(); // crucial otherwise request will get stuck without reaching routes
+});
+
 // enable json body parsing otherwise request.body will be undefined
 // note: express execute things from top to bottom, e.g if json body parsing after post, req.body will be undefined
 app.use(express.json());
